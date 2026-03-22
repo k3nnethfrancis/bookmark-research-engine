@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "command -v bre >/dev/null 2>&1 || (echo '[bookmark-research-engine] Installing bre CLI...' && pip install -q \"${CLAUDE_PLUGIN_ROOT}\" && echo '[bookmark-research-engine] bre installed. Run `bre setup` to configure.')"
+          }
+        ]
+      }
+    ]
+  }
+}

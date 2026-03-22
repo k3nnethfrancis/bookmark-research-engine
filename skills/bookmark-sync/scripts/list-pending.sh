@@ -1,11 +1,17 @@
 #!/bin/bash
 # List pending bookmarks with author, text snippet, and link count
-# Output is structured for easy triage
+# Uses bre config for pending file location
 
-PENDING="$HOME/Desktop/lab/projects/reference/smaug/.state/pending-bookmarks.json"
+if ! command -v bre &>/dev/null; then
+    echo "bre CLI not found. Run: pip install bookmark-research-engine"
+    exit 1
+fi
 
-if [ ! -f "$PENDING" ]; then
-    echo "No pending bookmarks file found at $PENDING"
+# Get pending file path from bre config
+PENDING=$(python3 -c "from bre.config import load_config; print(load_config().pending_file)" 2>/dev/null)
+
+if [ -z "$PENDING" ] || [ ! -f "$PENDING" ]; then
+    echo "No pending bookmarks file found. Run 'bre fetch' first."
     exit 1
 fi
 
@@ -15,10 +21,7 @@ import json, sys
 with open('$PENDING') as f:
     data = json.load(f)
 
-bookmarks = data.get('bookmarks', data) if isinstance(data, dict) else data
-if isinstance(bookmarks, dict):
-    bookmarks = bookmarks.get('bookmarks', [])
-
+bookmarks = data.get('bookmarks', [])
 if not bookmarks:
     print('No pending bookmarks.')
     sys.exit(0)
@@ -27,37 +30,25 @@ print(f'=== {len(bookmarks)} Pending Bookmarks ===')
 print()
 
 for i, b in enumerate(bookmarks, 1):
-    author = b.get('author', b.get('username', '?'))
-    text = b.get('text', b.get('tweet_text', b.get('content', '')))
-    # Truncate to first 150 chars
-    snippet = text[:150].replace('\n', ' ')
-    if len(text) > 150:
-        snippet += '...'
-    links = b.get('links', b.get('urls', []))
+    author = b.get('author', '?')
+    text = b.get('text', '')[:150].replace('\n', ' ')
+    if len(b.get('text', '')) > 150:
+        text += '...'
+    links = b.get('links', [])
     link_count = len(links) if isinstance(links, list) else 0
 
-    # Check for arxiv links
-    has_arxiv = False
     arxiv_ids = []
     if isinstance(links, list):
         for link in links:
-            expanded = ''
-            if isinstance(link, dict):
-                expanded = link.get('expanded', link.get('url', ''))
-            elif isinstance(link, str):
-                expanded = link
+            expanded = link.get('expanded', '') if isinstance(link, dict) else ''
             if 'arxiv.org' in expanded:
-                has_arxiv = True
                 parts = expanded.split('/')
                 for j, p in enumerate(parts):
                     if p in ('abs', 'pdf') and j + 1 < len(parts):
                         arxiv_ids.append(parts[j + 1].replace('.pdf', ''))
 
-    arxiv_tag = ''
-    if has_arxiv:
-        arxiv_tag = f' [arxiv: {\" \".join(arxiv_ids)}]'
-
+    arxiv_tag = f' [arxiv: {\" \".join(arxiv_ids)}]' if arxiv_ids else ''
     print(f'{i}. @{author} ({link_count} links{arxiv_tag})')
-    print(f'   {snippet}')
+    print(f'   {text}')
     print()
 "
