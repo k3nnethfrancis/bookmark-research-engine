@@ -1,0 +1,7 @@
+{
+  "name": "bookmark-research-engine",
+  "version": "0.1.0",
+  "description": "Turn X bookmarks into ranked, analyzed research briefs",
+  "author": "Kenneth Cavanagh",
+  "skills": ["skills/bookmark-sync"]
+}

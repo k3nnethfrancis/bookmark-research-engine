@@ -1,0 +1,51 @@
+# BRE Configuration
+# Copy to ./bre.yaml or ~/.config/bre/config.yaml
+# Or run `bre setup` for interactive configuration
+
+auth:
+  # Extract from browser DevTools → Application → Cookies → x.com
+  auth_token: "YOUR_AUTH_TOKEN"
+  ct0: "YOUR_CT0_TOKEN"
+  # bearer_token: uses X's public web client token by default
+
+# Bookmark folders — map folder IDs to tag names
+# Get IDs from URLs like: https://x.com/i/bookmarks/1234567890
+folders:
+  # "1234567890": "ai-research"
+  # "0987654321": "tools"
+
+timezone: "America/New_York"
+
+# ── Vault ──────────────────────────────────────────────────
+# Where reports, triage, and inbox files live.
+# Default: ~/.config/bre/vault (self-contained, no Obsidian needed)
+# To use an existing Obsidian vault, point vault_root there.
+vault_root: "~/.config/bre/vault"
+
+# State files (pending bookmarks JSON, last-check timestamp)
+# Default: ~/.config/bre/state/
+pending_file: "~/.config/bre/state/pending-bookmarks.json"
+state_file: "~/.config/bre/state/bookmarks-state.json"
+
+# Archive file — used for dedup (skip bookmarks already in this file)
+# Defaults to vault inbox
+archive_file: "~/.config/bre/vault/bookmarks/inbox.md"
+
+# ── Vault file layout (relative to vault_root) ────────────
+# These are the files/dirs the skill reads and writes.
+# Defaults shown — override to match your vault structure.
+# vault:
+#   inbox: "bookmarks/inbox.md"                         # append-only bookmark log
+#   guidance: "bookmarks/bookmark-review-guidance.md"    # your research interests (controls triage)
+#   triage_dir: "bookmarks/triage"                       # triage reports + approval files
+#   reports_dir: "bookmarks/reports"                     # deep dive research briefs (main output)
+#   engagement_log: "bookmarks/engagement-log.md"        # tracks which reports you've read
+#   triage_log: "bookmarks/triage-log.md"                # last-processed date for triage
+#   feedback_dir: "bookmarks/feedback"                   # monthly engagement analytics
+#   archive_dir: "bookmarks/archive"                     # rotated old inbox entries
+
+# ── Example: Existing Obsidian vault ──────────────────────
+# vault_root: "~/Documents/my-vault"
+# archive_file: "~/Documents/my-vault/bookmarks/inbox.md"
+# pending_file: "~/Documents/my-vault/.state/pending.json"
+# state_file: "~/Documents/my-vault/.state/state.json"
